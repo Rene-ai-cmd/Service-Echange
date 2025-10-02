@@ -3,8 +3,6 @@ package cal.info;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import io.chucknorris.client.ChuckNorrisClient;
-import io.chucknorris.client.Joke;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,15 +17,11 @@ public class App
         HttpServer serveur = HttpServer.create(new InetSocketAddress(8000), 0);
 
         // Première route "/accueil" :
-        serveur.createContext("/accueil", new HttpHandler() {
+        serveur.createContext("/", new HttpHandler() {
             @Override
             public void handle(HttpExchange echange) throws IOException {
 
-                ChuckNorrisClient clientChuck = new ChuckNorrisClient();
-                // get a random joke and print it
-                Joke joke = clientChuck.getRandomJoke();
-                String response = joke.getValue();
-
+                String response = "Une belle application en devenir";
                 echange.sendResponseHeaders(200, response.length());
                 OutputStream os = echange.getResponseBody();
                 os.write(response.getBytes());
