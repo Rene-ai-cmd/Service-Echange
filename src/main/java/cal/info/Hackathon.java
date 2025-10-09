@@ -5,6 +5,7 @@ import java.util.Date;
 
 public class Hackathon {
 
+    private int id;
     private String nomHackathon;
     private String dateHackathon;
     private String lieuHackathon;
@@ -18,6 +19,22 @@ public class Hackathon {
         this.dateHackathon = dateHackathon;
         this.lieuHackathon = lieuHackathon;
         this.urlHackathon = urlHackathon;
+    }
+
+    public Hackathon(int id, String nomHackathon, String dateHackathon, String lieuHackathon, String urlHackathon) {
+        this.id = id;
+        this.nomHackathon = nomHackathon;
+        this.dateHackathon = dateHackathon;
+        this.lieuHackathon = lieuHackathon;
+        this.urlHackathon = urlHackathon;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNomHackathon() {
@@ -55,6 +72,7 @@ public class Hackathon {
     @Override
     public String toString() {
         return "Woa le beau hackathon : {" +
+                "\"id\": \"" + id + "\"" +
                 "\"nomHackathon\": \"" + nomHackathon + "\"" +
                 ", \"dateHackathon\": \"" + dateHackathon + "\"" +
                 ", \"lieuHackathon\": \"" + lieuHackathon + "\"" +
