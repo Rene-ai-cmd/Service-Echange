@@ -30,7 +30,7 @@ public class App
         });
 
         serveur.createContext("/hackathon", new ControleurHackathon());
-
+        serveur.createContext("/etudiant", new ControleurEtudiant());
 
         // Démarrer le serveur
         serveur.setExecutor(null); // Créer un exécuteur par défaut

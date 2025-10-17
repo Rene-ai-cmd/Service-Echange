@@ -7,6 +7,9 @@ public class Etudiant {
     private int ageEtudiant;
     private String programme;
 
+    public Etudiant() {
+    }
+
     public Etudiant(String nomEtudiant, int ageEtudiant, String programme) {
         this.nomEtudiant = nomEtudiant;
         this.ageEtudiant = ageEtudiant;
