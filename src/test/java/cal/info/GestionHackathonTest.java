@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GestionHackathonTest {
 
-    private GestionHackathon gestionHackathon;
+    private HackathonDAO gestionHackathon;
 
     @BeforeAll
     public void setupAll() {
@@ -29,7 +29,7 @@ public class GestionHackathonTest {
         }
         // Réinitialiser la base de données (recréer les tables)
         BaseDeDonneesUtil.initialiserBase();
-        gestionHackathon = new GestionHackathon();
+        gestionHackathon = new HackathonDAO();
     }
 
     @AfterAll

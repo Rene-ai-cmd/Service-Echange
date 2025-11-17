@@ -1,5 +1,7 @@
-package cal.info;
+package cal.info.presentation;
 
+import cal.info.Etudiant;
+import cal.info.HackathonDAO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -10,12 +12,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.util.List;
 
 public class ControleurEtudiant implements HttpHandler {
 
-    public GestionHackathon gestionHackathon = new GestionHackathon();
+    public HackathonDAO gestionHackathon = new HackathonDAO();
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -40,9 +41,10 @@ public class ControleurEtudiant implements HttpHandler {
         InputStreamReader lecteur = new InputStreamReader(corpRequete, StandardCharsets.UTF_8);
 
        List<Etudiant> etudiants = mapper.readValue(lecteur, new TypeReference<List<Etudiant>>() {});
-//       gestionHackathon.ajouterEtudiant(etudiants);
+       gestionHackathon.ajouterEtudiant(etudiants);
 
-        String reponse = "Le Hackathon a bien été ajouté";
+       gestionHackathon.afficheEtudiants();
+        String reponse = "Mes etudiants ont bien été ajouté";
         byte[] reponseEncodee = reponse.getBytes(StandardCharsets.UTF_8);
 
         echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");

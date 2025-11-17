@@ -1,5 +1,8 @@
-package cal.info;
+package cal.info.presentation;
 
+import cal.info.HackathonDAO;
+import cal.info.Hackathon;
+import cal.info.metier.GestionHackathon;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
@@ -15,7 +18,12 @@ import java.util.List;
 
 public class ControleurHackathon implements HttpHandler {
 
-    public GestionHackathon gestionHackathon = new GestionHackathon();
+    public ControleurHackathon(GestionHackathon gestionHackathon) {
+        this.gestionHackathon = gestionHackathon;
+    }
+
+    public GestionHackathon gestionHackathon;
+
 
     private ObjectMapper mapper = new ObjectMapper();
     @Override
@@ -74,7 +82,8 @@ public class ControleurHackathon implements HttpHandler {
 
     private void listeHackathons(HttpExchange echange) throws SQLException, IOException {
 
-        List<Hackathon> hackathons = gestionHackathon.retrouverHackathons();
+        List<Hackathon> hackathons = gestionHackathon.retrouverHa
+    public GestionHackathon(Hackathckathons();
 
         String reponse = null;
         reponse = mapper.writeValueAsString(hackathons);

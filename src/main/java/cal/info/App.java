@@ -1,5 +1,8 @@
 package cal.info;
 
+import cal.info.metier.GestionHackathon;
+import cal.info.presentation.ControleurEtudiant;
+import cal.info.presentation.ControleurHackathon;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -29,9 +32,19 @@ public class App
             }
         });
 
-        serveur.createContext("/hackathon", new ControleurHackathon());
-        serveur.createContext("/etudiant", new ControleurEtudiant());
+//        DataSource
 
+        HackathonDAO dao = new HackathonDAO(null);
+        GestionHackathon gestionHackathon = new GestionHackathon(dao);
+        ControleurHackathon controleurHackathon = new ControleurHackathon(gestionHackathon);
+        serveur.createContext("/hackathon", controleurHackathon);
+
+
+
+
+
+        serveur.createContext("/etudiant", new ControleurEtudiant());
+        
         // Démarrer le serveur
         serveur.setExecutor(null); // Créer un exécuteur par défaut
         serveur.start();
