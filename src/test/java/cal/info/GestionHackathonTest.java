@@ -1,9 +1,9 @@
 package cal.info;
 
-import cal.info.util.BaseDeDonneesUtil;
+import cal.info.donnes.HackathonDAO;
+import cal.info.modele.Hackathon;
 import org.junit.jupiter.api.*;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -24,12 +24,12 @@ public class GestionHackathonTest {
     @BeforeEach
     public void setup() throws SQLException {
         // Réinitialiser la base de données avant chaque test
-        try (Connection conn = BaseDeDonneesUtil.getConnection()) {
-            conn.createStatement().execute("DROP TABLE IF EXISTS Hackathon;");
-        }
+//        try (Connection conn = BaseDeDonneesUtil.getConnection()) {
+//            conn.createStatement().execute("DROP TABLE IF EXISTS Hackathon;");
+//        }
         // Réinitialiser la base de données (recréer les tables)
-        BaseDeDonneesUtil.initialiserBase();
-        gestionHackathon = new HackathonDAO();
+//        BaseDeDonneesUtil.initialiserBase();
+//        gestionHackathon = new HackathonDAO();
     }
 
     @AfterAll

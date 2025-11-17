@@ -1,7 +1,4 @@
-package cal.info;
-
-import java.time.LocalDate;
-import java.util.Date;
+package cal.info.modele;
 
 public class Hackathon {
 

@@ -1,12 +1,15 @@
 package cal.info;
 
+import cal.info.donnes.HackathonDAO;
 import cal.info.metier.GestionHackathon;
 import cal.info.presentation.ControleurEtudiant;
 import cal.info.presentation.ControleurHackathon;
+import cal.info.util.BaseDeDonneesUtil;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -32,16 +35,15 @@ public class App
             }
         });
 
-//        DataSource
+        // Pool de connexion
+        BaseDeDonneesUtil.initialiser();
+        DataSource dataSource = BaseDeDonneesUtil.obtenirDataSource();
 
-        HackathonDAO dao = new HackathonDAO(null);
+        // Injection de dépendances
+        HackathonDAO dao = new HackathonDAO(dataSource);
         GestionHackathon gestionHackathon = new GestionHackathon(dao);
         ControleurHackathon controleurHackathon = new ControleurHackathon(gestionHackathon);
         serveur.createContext("/hackathon", controleurHackathon);
-
-
-
-
 
         serveur.createContext("/etudiant", new ControleurEtudiant());
         

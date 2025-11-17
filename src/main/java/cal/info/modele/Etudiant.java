@@ -1,6 +1,4 @@
-package cal.info;
-
-import java.io.Serializable;
+package cal.info.modele;
 
 public class Etudiant {
     private String nomEtudiant;

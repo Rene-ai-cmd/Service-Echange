@@ -1,4 +1,4 @@
-package cal.info;
+package cal.info.modele;
 
 import java.util.List;
 
