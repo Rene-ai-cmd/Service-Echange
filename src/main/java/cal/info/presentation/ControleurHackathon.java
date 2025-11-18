@@ -21,7 +21,7 @@ public class ControleurHackathon implements HttpHandler {
         this.gestionHackathon = gestionHackathon;
     }
 
-    public GestionHackathon gestionHackathon;
+    private final GestionHackathon gestionHackathon;
 
 
     private ObjectMapper mapper = new ObjectMapper();

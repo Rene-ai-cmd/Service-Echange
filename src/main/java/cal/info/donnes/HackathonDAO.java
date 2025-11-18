@@ -10,7 +10,7 @@ import java.util.List;
 
 public class HackathonDAO {
 
-    DataSource dataSource;
+    private final DataSource dataSource;
 
     public HackathonDAO(DataSource dataSource) {
         this.dataSource = dataSource;

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GestionHackathon {
 
-    HackathonDAO dao;
+    private final HackathonDAO dao;
 
     public GestionHackathon(HackathonDAO hackathonDAO) {
         this.dao = hackathonDAO;

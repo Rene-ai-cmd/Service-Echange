@@ -17,7 +17,7 @@ import java.net.InetSocketAddress;
 public class App 
 {
     public static void main( String[] args ) throws IOException {
-        System.out.println( "Hello World!" );
+        System.out.println( "Hello la belle gang que vous etes (sauf valentyin qui est sur son tel)!" );
 
         // Création du serveur HTTP qui écoutera sur le port 8000
         HttpServer serveur = HttpServer.create(new InetSocketAddress(8000), 0);
