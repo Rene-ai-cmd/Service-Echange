@@ -10,11 +10,28 @@ public class ControleurHackathon implements HttpHandler {
     @Override
     public void handle(HttpExchange echange) throws IOException {
 
+        String typeRequete = echange.getRequestMethod();
+
+        switch (typeRequete) {
+            case "POST":
+                ajouterHackathon();
+                break;            // ⚠️ Ne pas oublier le break !
+            case "GET":
+                listeHackathons();
+                break;
+            case "PATCH":
+                modifierHackathon();
+                break;
+            case "DELETE":
+                supprimerHackathon();
+                break;
+            default:
+                break;
+        }
     }
 
     public void listeHackathons() {
         System.out.println("Mes hackathons vont être listés");
-
     }
 
     public void rechercheHackathons() {
@@ -23,7 +40,6 @@ public class ControleurHackathon implements HttpHandler {
 
     public void ajouterHackathon() {
         System.out.println("Mon hackathon va etre ajouté");
-
     }
 
     public void modifierHackathon() {

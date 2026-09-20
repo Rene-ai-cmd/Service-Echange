@@ -11,16 +11,28 @@ public class ControleurEtudiant implements HttpHandler {
     @Override
     public void handle(HttpExchange echange) throws IOException {
 
+        // On regarde le TYPE de requête pour savoir quoi faire
         String typeRequete = echange.getRequestMethod();
+
         switch (typeRequete) {
             case "POST":
-                ajouterEtudiants();
+                ajouterEtudiant();
+                break;            // ⚠️ Ne pas oublier le break !
+            case "GET":
+                afficherEtudiants();
+                break;
+            case "PATCH":
+                modifierEtudiant();
+                break;
+            case "DELETE":
+                supprimerEtudiant();
+                break;
             default:
                 break;
         }
     }
 
-    public void ajouterEtudiants()  {
+    public void ajouterEtudiant()  {
         System.out.println("Mes etudiants vont être ajoutés");
     }
 
@@ -30,12 +42,10 @@ public class ControleurEtudiant implements HttpHandler {
 
     public void modifierEtudiant() {
         System.out.println("Mon etudiant va être modifié");
-
     }
 
-    public void supprimer() {
+    public void supprimerEtudiant() {
         System.out.println("Mon etudiant va être supprimé");
-
     }
 
 }
