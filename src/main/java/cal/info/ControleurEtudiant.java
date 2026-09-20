@@ -1,17 +1,9 @@
-package cal.info.presentation;
+package cal.info;
 
-import cal.info.modele.Etudiant;
-import cal.info.donnes.HackathonDAO;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class ControleurEtudiant implements HttpHandler {
@@ -28,13 +20,22 @@ public class ControleurEtudiant implements HttpHandler {
         }
     }
 
-    private void ajouterEtudiants()  {
-        String reponse = "Mes etudiants vont être ajouté";
+    public void ajouterEtudiants()  {
+        System.out.println("Mes etudiants vont être ajoutés");
     }
 
+    public void afficherEtudiants() {
+        System.out.println("Mes etudiants vont être affichés");
+    }
 
+    public void modifierEtudiant() {
+        System.out.println("Mon etudiant va être modifié");
 
+    }
 
+    public void supprimer() {
+        System.out.println("Mon etudiant va être supprimé");
 
+    }
 
 }
