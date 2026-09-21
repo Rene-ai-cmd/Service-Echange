@@ -14,39 +14,39 @@ public class ControleurHackathon implements HttpHandler {
 
         switch (typeRequete) {
             case "POST":
-                ajouterHackathon();
+                ajouterHackathon(echange);
                 break;            // ⚠️ Ne pas oublier le break !
             case "GET":
-                listeHackathons();
+                listeHackathons(echange);
                 break;
             case "PATCH":
-                modifierHackathon();
+                modifierHackathon(echange);
                 break;
             case "DELETE":
-                supprimerHackathon();
+                supprimerHackathon(echange);
                 break;
             default:
                 break;
         }
     }
 
-    public void listeHackathons() {
+    public void listeHackathons(HttpExchange echange) {
         System.out.println("Mes hackathons vont être listés");
     }
 
-    public void rechercheHackathons() {
+    public void rechercheHackathons(HttpExchange echange) {
         System.out.println("Mes hackathons vont être recherchés");
     }
 
-    public void ajouterHackathon() {
+    public void ajouterHackathon(HttpExchange echange) {
         System.out.println("Mon hackathon va etre ajouté");
     }
 
-    public void modifierHackathon() {
+    public void modifierHackathon(HttpExchange echange) {
         System.out.println("Mon hackathon va etre modifié");
     }
 
-    public void supprimerHackathon() {
+    public void supprimerHackathon(HttpExchange echange) {
         System.out.println("Mon hackathon va être supprimé");
     }
 

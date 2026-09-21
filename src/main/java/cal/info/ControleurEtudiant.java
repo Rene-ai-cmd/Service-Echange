@@ -16,35 +16,35 @@ public class ControleurEtudiant implements HttpHandler {
 
         switch (typeRequete) {
             case "POST":
-                ajouterEtudiant();
+                ajouterEtudiant(echange);
                 break;            // ⚠️ Ne pas oublier le break !
             case "GET":
-                afficherEtudiants();
+                afficherEtudiants(echange);
                 break;
             case "PATCH":
-                modifierEtudiant();
+                modifierEtudiant(echange);
                 break;
             case "DELETE":
-                supprimerEtudiant();
+                supprimerEtudiant(echange);
                 break;
             default:
                 break;
         }
     }
 
-    public void ajouterEtudiant()  {
+    public void ajouterEtudiant(HttpExchange echange)  {
         System.out.println("Mes etudiants vont être ajoutés");
     }
 
-    public void afficherEtudiants() {
+    public void afficherEtudiants(HttpExchange echange) {
         System.out.println("Mes etudiants vont être affichés");
     }
 
-    public void modifierEtudiant() {
+    public void modifierEtudiant(HttpExchange echange) {
         System.out.println("Mon etudiant va être modifié");
     }
 
-    public void supprimerEtudiant() {
+    public void supprimerEtudiant(HttpExchange echange) {
         System.out.println("Mon etudiant va être supprimé");
     }
 
