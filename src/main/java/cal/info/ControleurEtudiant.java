@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class ControleurEtudiant implements HttpHandler {
@@ -32,7 +33,12 @@ public class ControleurEtudiant implements HttpHandler {
         }
     }
 
-    public void ajouterEtudiant(HttpExchange echange)  {
+    public void ajouterEtudiant(HttpExchange echange) throws IOException {
+
+        new String(echange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+
+
+
         System.out.println("Mes etudiants vont être ajoutés");
     }
 
