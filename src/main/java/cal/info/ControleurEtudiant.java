@@ -4,6 +4,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -35,11 +37,37 @@ public class ControleurEtudiant implements HttpHandler {
 
     public void ajouterEtudiant(HttpExchange echange) throws IOException {
 
-        new String(echange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        //        new String(echange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        // 1. On récupère le tuyau d'entrée (les données du client)
+        InputStream fluxEntree = echange.getRequestBody();
 
+        // 2. On lit TOUT le contenu du tuyau et on le transforme en texte
+        String corpsRecu = new String(
+                fluxEntree.readAllBytes(),
+                StandardCharsets.UTF_8
+        );
 
+        // 3. On ferme le tuyau (bonne pratique)
+        fluxEntree.close();
 
+        // 4. On affiche ce qu'on a reçu pour vérifier
+        System.out.println("Données reçues du client : " + corpsRecu);
         System.out.println("Mes etudiants vont être ajoutés");
+
+        //REPONSE
+        // ÉTAPE 1 : préparer le texte de la réponse
+        String reponse = "Etudiant ajouté avec succès !";
+        byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+
+        // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
+        echange.sendResponseHeaders(200, octetsReponse.length);
+
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        OutputStream fluxSortie = echange.getResponseBody();
+        fluxSortie.write(octetsReponse);
+        fluxSortie.close();
+
+
     }
 
     public void afficherEtudiants(HttpExchange echange) {
