@@ -50,7 +50,7 @@ public class ControleurEtudiant implements HttpHandler {
 
         // 4. On affiche ce qu'on a reçu pour vérifier
         System.out.println("Données reçues du client : " + corpsRecu);
-        System.out.println("Mes etudiants vont être ajoutés");
+        System.out.println("Mon etudiant vont être ajoutés");
 
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
