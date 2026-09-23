@@ -55,9 +55,12 @@ public class ControleurEtudiant implements HttpHandler {
         System.out.println("Données reçues du client : " + corpsRecu);
         System.out.println("Mon etudiant vont être ajoutés");
 
+        // 5. Construisons notre objet :
+        Etudiant etudiantRecu = objectMapper.readValue(corpsRecu, Etudiant.class);
+
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
-        String reponse = "Etudiant ajouté avec succès !";
+        String reponse = "Etudiant ajouté avec succès ! : " + etudiantRecu.toString() ;
         byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
 
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
