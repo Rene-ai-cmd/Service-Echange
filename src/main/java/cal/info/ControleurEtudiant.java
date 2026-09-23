@@ -2,6 +2,7 @@ package cal.info;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +10,8 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class ControleurEtudiant implements HttpHandler {
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void handle(HttpExchange echange) throws IOException {
@@ -73,15 +76,20 @@ public class ControleurEtudiant implements HttpHandler {
 
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
-        String reponse = "Liste d'étudiants !";
-        byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+//        String reponse = "Liste d'étudiants !";
+//        byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+        Etudiant testPourJson = new Etudiant("Yohann Ritter àéî()", 43, "Techniques de l'Informatique", 12345);
+        byte[] etudiantConverti = objectMapper.writeValueAsBytes(testPourJson);
+
 
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
-        echange.sendResponseHeaders(200, octetsReponse.length);
+//        echange.sendResponseHeaders(200, octetsReponse.length);
+        echange.sendResponseHeaders(200, etudiantConverti.length);
 
         // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
         OutputStream fluxSortie = echange.getResponseBody();
-        fluxSortie.write(octetsReponse);
+//        fluxSortie.write(octetsReponse);
+        fluxSortie.write(etudiantConverti);
         fluxSortie.close();
     }
 
