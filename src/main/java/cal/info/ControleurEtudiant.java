@@ -81,8 +81,14 @@ public class ControleurEtudiant implements HttpHandler {
         // ÉTAPE 1 : préparer le texte de la réponse
 //        String reponse = "Liste d'étudiants !";
 //        byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
-        Etudiant testPourJson = new Etudiant("Yohann Ritter àéî()", 43, "Techniques de l'Informatique", 12345);
-        byte[] etudiantConverti = objectMapper.writeValueAsBytes(testPourJson);
+        Etudiant etudiantTest = new Etudiant("Yohann Ritter àéî()", 43, "Techniques de l'Informatique", 12345);
+        Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
+        etudiantTest.ajouterUnePreference(hackathonTest);
+        etudiantTest.ajouterUnePreference(hackathonTest);
+
+
+
+        byte[] etudiantConverti = objectMapper.writeValueAsBytes(etudiantTest);
 
 
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)

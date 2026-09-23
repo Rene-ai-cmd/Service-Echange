@@ -1,10 +1,16 @@
 package cal.info;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Etudiant {
+
+    private int id;
     private String nomEtudiant;
     private int ageEtudiant;
     private String programme;
     private Integer matricule;
+    private List<Hackathon> preferencesHackathons;
 
     public Etudiant() {
     }
@@ -14,6 +20,20 @@ public class Etudiant {
         this.ageEtudiant = ageEtudiant;
         this.programme = programme;
         this.matricule = matricule;
+        this.preferencesHackathons = new ArrayList<>();
+    }
+
+    public Etudiant(int id, String nomEtudiant, int ageEtudiant, String programme, int matricule) {
+        this.id = id;
+        this(nomEtudiant, ageEtudiant, programme, matricule);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNomEtudiant() {
@@ -48,6 +68,14 @@ public class Etudiant {
         this.matricule = matricule;
     }
 
+    public void ajouterUnePreference(Hackathon hackathon){
+        this.preferencesHackathons.add(hackathon);
+    }
+
+    public List<Hackathon> getPreferencesHackathons() {
+        return this.preferencesHackathons;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -67,6 +95,7 @@ public class Etudiant {
                 "\"nomEtudiant\": \"" + nomEtudiant + "\"" +
                 ", \"ageEtudiant\": " + ageEtudiant +
                 ", \"programme\": \"" + programme + "\"" +
+                ", \"preferences\": \"" + preferencesHackathons + "\"" +
                 "}";
     }
 }
