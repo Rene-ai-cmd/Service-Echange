@@ -10,11 +10,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ControleurEtudiant implements HttpHandler {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
+    List<Etudiant> listeTemporaire = new ArrayList<>();
 
     @Override
     public void handle(HttpExchange echange) throws IOException {
@@ -70,6 +72,8 @@ public class ControleurEtudiant implements HttpHandler {
         // 5. Construisons notre objet :
         Etudiant etudiantRecu = objectMapper.readValue(corpsRecu, Etudiant.class);
 
+        listeTemporaire.add(etudiantRecu);
+
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
         String reponse = "Etudiant ajouté avec succès ! : " + etudiantRecu.toString() ;
@@ -89,11 +93,11 @@ public class ControleurEtudiant implements HttpHandler {
 
         System.out.println("Mes etudiants vont être affichés");
 
-        Etudiant etudiantTest = new Etudiant("Yohann Ritter àéî()", 43, "Techniques de l'Informatique", 12345);
-        Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
-        etudiantTest.ajouterUnePreference(hackathonTest);
-        etudiantTest.ajouterUnePreference(hackathonTest);
-        byte[] etudiantConverti = objectMapper.writeValueAsBytes(etudiantTest);
+//        Etudiant etudiantTest = new Etudiant("Yohann Ritter àéî()", 43, "Techniques de l'Informatique", 12345);
+//        Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
+//        etudiantTest.ajouterUnePreference(hackathonTest);
+//        etudiantTest.ajouterUnePreference(hackathonTest);
+        byte[] etudiantConverti = objectMapper.writeValueAsBytes(listeTemporaire);
 
         echange.sendResponseHeaders(200, etudiantConverti.length);
 
