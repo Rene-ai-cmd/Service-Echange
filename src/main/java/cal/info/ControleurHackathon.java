@@ -8,10 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ControleurHackathon implements HttpHandler {
 
     ObjectMapper objectMapper = new ObjectMapper();
+    List<Hackathon> listeTemporaire = new ArrayList<>();
 
     @Override
     public void handle(HttpExchange echange) throws IOException {
@@ -21,17 +24,23 @@ public class ControleurHackathon implements HttpHandler {
         switch (typeRequete) {
             case "POST":
                 ajouterHackathon(echange);
-                break;            // ⚠️ Ne pas oublier le break !
+                break;
             case "GET":
                 listeHackathons(echange);
                 break;
-            case "PATCH":
+            case "PUT":
                 modifierHackathon(echange);
                 break;
             case "DELETE":
                 supprimerHackathon(echange);
                 break;
             default:
+                String reponse = "Fonctionnalité non prise en charge.";
+                byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+                echange.sendResponseHeaders(501, octetsReponse.length);
+                OutputStream fluxSortie = echange.getResponseBody();
+                fluxSortie.write(octetsReponse);
+                fluxSortie.close();
                 break;
         }
     }
@@ -39,8 +48,8 @@ public class ControleurHackathon implements HttpHandler {
     public void listeHackathons(HttpExchange echange) throws IOException {
         System.out.println("Mes hackathons vont être listés");
 
-        Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
-        byte[] hackathonSerialise = objectMapper.writeValueAsBytes(hackathonTest);
+//        Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
+        byte[] hackathonSerialise = objectMapper.writeValueAsBytes(listeTemporaire);
 
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
@@ -74,7 +83,7 @@ public class ControleurHackathon implements HttpHandler {
 
         // 5. Je Déserialise
         Hackathon hackathonRecu = objectMapper.readValue(corpsRecu, Hackathon.class);
-
+        listeTemporaire.add(hackathonRecu);
 
         System.out.println("Mon hackathon va etre ajouté");
 
@@ -90,8 +99,6 @@ public class ControleurHackathon implements HttpHandler {
         OutputStream fluxSortie = echange.getResponseBody();
         fluxSortie.write(octetsReponse);
         fluxSortie.close();
-
-
 
     }
 
@@ -110,12 +117,17 @@ public class ControleurHackathon implements HttpHandler {
         fluxEntree.close();
 
         // 4. On affiche ce qu'on a reçu pour vérifier
-        System.out.println("Données reçues du hackathon : " + corpsRecu);
-        System.out.println("Mon hackathon va etre modifié");
+        System.out.println("Données reçues du client : " + corpsRecu);
+
+        // 5. Je Déserialise
+        Hackathon hackathonRecu = objectMapper.readValue(corpsRecu, Hackathon.class);
+
+
+        System.out.println("Mon hackathon va être modifié");
 
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
-        String reponse = "Hackathon modifié avec succès !";
+        String reponse = "Hackathon modifié avec succès : " + hackathonRecu.toString();
         byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
 
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
@@ -128,20 +140,29 @@ public class ControleurHackathon implements HttpHandler {
     }
 
     public void supprimerHackathon(HttpExchange echange) throws IOException {
-        System.out.println("Mon hackathon va être supprimé");
 
-        //REPONSE
-        // ÉTAPE 1 : préparer le texte de la réponse
-        String reponse = "Hackathon supprimé avec succès !";
-        byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+        String filtre = echange.getRequestURI().getQuery();
+        if (filtre != null && filtre.contains("idHackathon=")) {
+            String param= filtre.split("idHackathon=")[1];
+            int idHackathon = Integer.parseInt(param);
+            System.out.println("Le hackathon " + idHackathon + " va être supprimé");
 
-        // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
-        echange.sendResponseHeaders(200, octetsReponse.length);
+            // Poutine
 
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
-        OutputStream fluxSortie = echange.getResponseBody();
-        fluxSortie.write(octetsReponse);
-        fluxSortie.close();
+            String reponse = "Hackathon supprimé avec succès !";
+            byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.sendResponseHeaders(200, octetsReponse.length);
+            OutputStream fluxSortie = echange.getResponseBody();
+            fluxSortie.write(octetsReponse);
+            fluxSortie.close();
+        } else {
+            String reponse = "Identifiant Hackathon manquant.";
+            byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.sendResponseHeaders(400, octetsReponse.length);
+            OutputStream fluxSortie = echange.getResponseBody();
+            fluxSortie.write(octetsReponse);
+            fluxSortie.close();
+        }
     }
 
 }

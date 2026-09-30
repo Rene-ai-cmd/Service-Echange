@@ -2,16 +2,19 @@ package cal.info;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class ControleurEtudiant implements HttpHandler {
 
-    ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void handle(HttpExchange echange) throws IOException {
@@ -24,10 +27,19 @@ public class ControleurEtudiant implements HttpHandler {
                 ajouterEtudiant(echange);
                 break;            // ⚠️ Ne pas oublier le break !
             case "GET":
-                afficherEtudiants(echange);
+
+                String filtre = echange.getRequestURI().getQuery();
+                if (filtre != null && filtre.contains("idHackathon=")) {
+                    String param= filtre.split("idHackathon=")[1];
+                    int idHackathon = Integer.parseInt(param);
+
+//                    rechercheHackathons(echange, nomHackathon);
+                } else {
+                    afficherEtudiants(echange);
+                }
                 break;
             case "PATCH":
-                modifierEtudiant(echange);
+                ajouterPreferences(echange);
                 break;
             case "DELETE":
                 supprimerEtudiant(echange);
@@ -77,79 +89,70 @@ public class ControleurEtudiant implements HttpHandler {
 
         System.out.println("Mes etudiants vont être affichés");
 
-        //REPONSE
-        // ÉTAPE 1 : préparer le texte de la réponse
-//        String reponse = "Liste d'étudiants !";
-//        byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
         Etudiant etudiantTest = new Etudiant("Yohann Ritter àéî()", 43, "Techniques de l'Informatique", 12345);
         Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
         etudiantTest.ajouterUnePreference(hackathonTest);
         etudiantTest.ajouterUnePreference(hackathonTest);
-
-
-
         byte[] etudiantConverti = objectMapper.writeValueAsBytes(etudiantTest);
 
-
-        // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
-//        echange.sendResponseHeaders(200, octetsReponse.length);
         echange.sendResponseHeaders(200, etudiantConverti.length);
 
         // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
         OutputStream fluxSortie = echange.getResponseBody();
-//        fluxSortie.write(octetsReponse);
         fluxSortie.write(etudiantConverti);
         fluxSortie.close();
     }
 
-    public void modifierEtudiant(HttpExchange echange) throws IOException {
-        // 1. On récupère le tuyau d'entrée (les données du client)
-        InputStream fluxEntree = echange.getRequestBody();
+    public void ajouterPreferences(HttpExchange echange) throws IOException {
 
-        // 2. On lit TOUT le contenu du tuyau et on le transforme en texte
-        String corpsRecu = new String(
-                fluxEntree.readAllBytes(),
-                StandardCharsets.UTF_8
-        );
+        String filtre = echange.getRequestURI().getQuery();
+        if (filtre != null && filtre.contains("matricule=")) {
+            String matricule= filtre.split("matricule=")[1];
+            System.out.println("L'étudiant " + matricule + " va être modifié");
 
-        // 3. On ferme le tuyau (bonne pratique)
-        fluxEntree.close();
+            List<Integer> preferences = objectMapper.readValue(echange.getRequestBody().readAllBytes(), new TypeReference<>() {});
+            // Poutine
 
-        // 4. On affiche ce qu'on a reçu pour vérifier
-        System.out.println("Données reçues du client : " + corpsRecu);
-
-        System.out.println("Mon etudiant va être modifié");
-
-        //REPONSE
-        // ÉTAPE 1 : préparer le texte de la réponse
-        String reponse = "Etudiant modifié avec succès !";
-        byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
-
-        // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
-        echange.sendResponseHeaders(200, octetsReponse.length);
-
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
-        OutputStream fluxSortie = echange.getResponseBody();
-        fluxSortie.write(octetsReponse);
-        fluxSortie.close();
+            String reponse = "Préférences " + preferences + " ajoutées avec succès à l'étudiant " + matricule + " !";
+            byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.sendResponseHeaders(200, octetsReponse.length);
+            OutputStream fluxSortie = echange.getResponseBody();
+            fluxSortie.write(octetsReponse);
+            fluxSortie.close();
+        } else {
+            String reponse = "Matricule étudiant manquant.";
+            byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.sendResponseHeaders(400, octetsReponse.length);
+            OutputStream fluxSortie = echange.getResponseBody();
+            fluxSortie.write(octetsReponse);
+            fluxSortie.close();
+        }
 
     }
 
     public void supprimerEtudiant(HttpExchange echange) throws IOException {
-        System.out.println("Mon etudiant va être supprimé");
+        String filtre = echange.getRequestURI().getQuery();
+        if (filtre != null && filtre.contains("idEtudiant=")) {
+            String param= filtre.split("idEtudiant=")[1];
+            int idEtudiant = Integer.parseInt(param);
+            System.out.println("L'étudiant " + idEtudiant + " va être supprimé");
 
-        //REPONSE
-        // ÉTAPE 1 : préparer le texte de la réponse
-        String reponse = "Etudiant supprimé avec succès !";
-        byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            // Poutine
 
-        // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
-        echange.sendResponseHeaders(200, octetsReponse.length);
-
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
-        OutputStream fluxSortie = echange.getResponseBody();
-        fluxSortie.write(octetsReponse);
-        fluxSortie.close();
+            String reponse = "Étudiant supprimé avec succès !";
+            byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.sendResponseHeaders(200, octetsReponse.length);
+            OutputStream fluxSortie = echange.getResponseBody();
+            fluxSortie.write(octetsReponse);
+            fluxSortie.close();
+        } else {
+            String reponse = "Identifiant étudiant manquant.";
+            byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.sendResponseHeaders(400, octetsReponse.length);
+            OutputStream fluxSortie = echange.getResponseBody();
+            fluxSortie.write(octetsReponse);
+            fluxSortie.close();
+        }
     }
 
 }
