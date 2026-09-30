@@ -34,8 +34,7 @@ public class ControleurEtudiant implements HttpHandler {
                 if (filtre != null && filtre.contains("idHackathon=")) {
                     String param= filtre.split("idHackathon=")[1];
                     int idHackathon = Integer.parseInt(param);
-
-//                    rechercheHackathons(echange, nomHackathon);
+                    rechercheParHackathons(echange, idHackathon);
                 } else {
                     afficherEtudiants(echange);
                 }
@@ -88,6 +87,20 @@ public class ControleurEtudiant implements HttpHandler {
         fluxSortie.close();
 
     }
+
+    private void rechercheParHackathons(HttpExchange echange, int idHackathon) throws IOException {
+        System.out.println("Recherche d'étudiants par id d'hackathon (" + idHackathon + ")");
+        byte[] etudiantConverti = objectMapper.writeValueAsBytes(listeTemporaire);
+
+        echange.sendResponseHeaders(200, etudiantConverti.length);
+
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        OutputStream fluxSortie = echange.getResponseBody();
+        fluxSortie.write(etudiantConverti);
+        fluxSortie.close();
+
+    }
+
 
     public void afficherEtudiants(HttpExchange echange) throws IOException {
 
