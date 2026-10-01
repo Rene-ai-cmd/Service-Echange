@@ -79,6 +79,7 @@ public class ControleurEtudiant implements HttpHandler {
         byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
 
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
+        echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
         echange.sendResponseHeaders(200, octetsReponse.length);
 
         // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
@@ -92,6 +93,7 @@ public class ControleurEtudiant implements HttpHandler {
         System.out.println("Recherche d'étudiants par id d'hackathon (" + idHackathon + ")");
         byte[] etudiantConverti = objectMapper.writeValueAsBytes(listeTemporaire);
 
+        echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
         echange.sendResponseHeaders(200, etudiantConverti.length);
 
         // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
@@ -112,6 +114,7 @@ public class ControleurEtudiant implements HttpHandler {
 //        etudiantTest.ajouterUnePreference(hackathonTest);
         byte[] etudiantConverti = objectMapper.writeValueAsBytes(listeTemporaire);
 
+        echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
         echange.sendResponseHeaders(200, etudiantConverti.length);
 
         // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
@@ -158,6 +161,7 @@ public class ControleurEtudiant implements HttpHandler {
 
             String reponse = "Étudiant supprimé avec succès !";
             byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
             echange.sendResponseHeaders(200, octetsReponse.length);
             OutputStream fluxSortie = echange.getResponseBody();
             fluxSortie.write(octetsReponse);
