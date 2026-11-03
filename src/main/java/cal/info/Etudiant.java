@@ -6,8 +6,7 @@ import java.util.List;
 public class Etudiant {
 
     private int id;
-    private String nomEtudiant;
-    private int ageEtudiant;
+    private String nom;
     private String programme;
     private Integer matricule;
     private List<Hackathon> preferencesHackathons;
@@ -15,17 +14,16 @@ public class Etudiant {
     public Etudiant() {
     }
 
-    public Etudiant(String nomEtudiant, int ageEtudiant, String programme, int matricule) {
-        this.nomEtudiant = nomEtudiant;
-        this.ageEtudiant = ageEtudiant;
+    public Etudiant(String nom, String programme, int matricule) {
+        this.nom = nom;
         this.programme = programme;
         this.matricule = matricule;
         this.preferencesHackathons = new ArrayList<>();
     }
 
-    public Etudiant(int id, String nomEtudiant, int ageEtudiant, String programme, int matricule) {
+    public Etudiant(int id, String nom, String programme, int matricule) {
+        this(nom,  programme, matricule);
         this.id = id;
-        this(nomEtudiant, ageEtudiant, programme, matricule);
     }
 
     public int getId() {
@@ -36,24 +34,16 @@ public class Etudiant {
         this.id = id;
     }
 
-    public String getNomEtudiant() {
-        return this.nomEtudiant;
+    public String getNom() {
+        return this.nom;
     }
 
-    public int getAgeEtudiant() {
-        return this.ageEtudiant;
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public String getProgramme() {
         return programme;
-    }
-
-    public void setNomEtudiant(String nomEtudiant) {
-        this.nomEtudiant = nomEtudiant;
-    }
-
-    public void setAgeEtudiant(int ageEtudiant) {
-        this.ageEtudiant = ageEtudiant;
     }
 
     public void setProgramme(String programme) {
@@ -77,23 +67,31 @@ public class Etudiant {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Etudiant etudiant = (Etudiant) o;
-        return etudiant.matricule.equals(this.matricule);
+    public boolean equals(Object obj) {
+        // si l'objet est comparé à lui-même
+        if (this == obj) return true;
+
+        // si l'objet comparé est null ou de type différent
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        // Alors, on peut convertir l'objet en Etudiant
+        Etudiant etudiant = (Etudiant) obj;
+
+        // retourner vrai si le matricule et le nom de l'etudiant sont les mêmes
+        return matricule.equals(etudiant.matricule) && nom.equals(etudiant.nom);
     }
 
     @Override
     public int hashCode() {
-        return 17 * matricule.hashCode();
+        // utiliser des nombres premiers et utiliser les méthodes hashCode()
+        // pour chaque attribut utilisé dans equals()
+        return 31 * matricule.hashCode() + nom.hashCode();
     }
 
     @Override
     public String toString() {
         return "On dit bonjour à : {" +
-                "\"nomEtudiant\": \"" + nomEtudiant + "\"" +
-                ", \"ageEtudiant\": " + ageEtudiant +
+                "\"nomEtudiant\": \"" + nom + "\"" +
                 ", \"programme\": \"" + programme + "\"" +
                 ", \"preferences\": \"" + preferencesHackathons + "\"" +
                 "}";

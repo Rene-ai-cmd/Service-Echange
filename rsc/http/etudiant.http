@@ -7,9 +7,8 @@ POST http://localhost:8000/etudiant
 Content-Type: application/json
 
 {
-  "ageEtudiant": 19,
   "matricule": 12345,
-  "nomEtudiant": "Linus Torvalds àéî()",
+  "nom": "Linus Torvalds àéî()",
   "programme": "Techniques de l'Informatique"
 }
 

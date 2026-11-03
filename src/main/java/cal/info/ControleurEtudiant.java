@@ -18,7 +18,7 @@ public class ControleurEtudiant implements HttpHandler {
     Map<String, Set<Etudiant>> etudiantsParProg = new HashMap<>();
 
     public ControleurEtudiant() {
-        Etudiant etudiantTest = new Etudiant("Yohann Ritter àéî()", 43, "Techniques de l'Informatique", 111);
+        Etudiant etudiantTest = new Etudiant("Yohann Ritter àéî()", "Techniques de l'Informatique", 111);
         Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
         etudiantTest.ajouterUnePreference(hackathonTest);
         etudiantTest.ajouterUnePreference(hackathonTest);
@@ -45,7 +45,7 @@ public class ControleurEtudiant implements HttpHandler {
                 if (filtre != null && filtre.contains("idHackathon=")) {
                     String param= filtre.split("idHackathon=")[1];
                     int idHackathon = Integer.parseInt(param);
-                    rechercheParHackathons(echange, idHackathon);
+                    rechercherParHackathons(echange, idHackathon);
                 } else {
                     afficherEtudiants(echange);
                 }
@@ -102,16 +102,25 @@ public class ControleurEtudiant implements HttpHandler {
         fluxSortie.close();
     }
 
-    private void rechercheParHackathons(HttpExchange echange, int idHackathon) throws IOException {
+    private void rechercherParHackathons(HttpExchange echange, int idHackathon) throws IOException {
         System.out.println("Recherche d'étudiants par id d'hackathon (" + idHackathon + ")");
-        byte[] etudiantConverti = objectMapper.writeValueAsBytes(listeTemporaire);
+
+        List<Etudiant> listeFiltree = new ArrayList<>();
+        for (Etudiant etudiant : listeTemporaire) {
+            for (Hackathon hackathon : etudiant.getPreferencesHackathons()) {
+                if (hackathon.getId() == idHackathon)
+                    listeFiltree.add(etudiant);
+            }
+        }
+
+        byte[] etudiantsConvertis = objectMapper.writeValueAsBytes(listeFiltree);
 
         echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
-        echange.sendResponseHeaders(200, etudiantConverti.length);
+        echange.sendResponseHeaders(200, etudiantsConvertis.length);
 
         // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
         OutputStream fluxSortie = echange.getResponseBody();
-        fluxSortie.write(etudiantConverti);
+        fluxSortie.write(etudiantsConvertis);
         fluxSortie.close();
     }
 
