@@ -43,7 +43,7 @@ public class ControleurEtudiant implements HttpHandler {
             case "GET":
                 String filtre = echange.getRequestURI().getQuery();
                 if (filtre == null) {
-                    afficherEtudiants(echange);
+                    listerEtudiants(echange);
                 } else if (filtre.contains("idHackathon=")) {
                     String param = filtre.split("idHackathon=")[1];
                     int idHackathon = Integer.parseInt(param);
@@ -78,7 +78,7 @@ public class ControleurEtudiant implements HttpHandler {
         System.out.println("Données reçues du client : " + corpsRecu);
         System.out.println("L'étudiant va être ajouté");
 
-        // 5. Construisons notre objet :
+        // 5. Construisons notre objet
         Etudiant etudiantRecu = objectMapper.readValue(corpsRecu, Etudiant.class);
 
         // 6. Ajoutons l'étudiant à la liste
@@ -92,27 +92,27 @@ public class ControleurEtudiant implements HttpHandler {
 
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
-        String reponse = "Etudiant ajouté avec succès ! : " + etudiantRecu.toString() ;
+        String reponse = "Etudiant ajouté avec succès : " + etudiantRecu.toString() ;
         byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
 
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
         echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
         echange.sendResponseHeaders(200, octetsReponse.length);
 
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
         OutputStream fluxSortie = echange.getResponseBody();
         fluxSortie.write(octetsReponse);
         fluxSortie.close();
     }
 
-    public void afficherEtudiants(HttpExchange echange) throws IOException {
-        System.out.println("Les etudiants vont être affichés");
+    public void listerEtudiants(HttpExchange echange) throws IOException {
+        System.out.println("Les etudiants vont être listés");
         byte[] etudiantsConvertis = objectMapper.writeValueAsBytes(listeTemporaire);
 
-        echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
+        echange.getResponseHeaders().set("Content-Type", "application/json");
         echange.sendResponseHeaders(200, etudiantsConvertis.length);
 
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
         OutputStream fluxSortie = echange.getResponseBody();
         fluxSortie.write(etudiantsConvertis);
         fluxSortie.close();
@@ -131,10 +131,10 @@ public class ControleurEtudiant implements HttpHandler {
 
         byte[] etudiantsConvertis = objectMapper.writeValueAsBytes(listeFiltree);
 
-        echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
+        echange.getResponseHeaders().set("Content-Type", "application/json");
         echange.sendResponseHeaders(200, etudiantsConvertis.length);
 
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
         OutputStream fluxSortie = echange.getResponseBody();
         fluxSortie.write(etudiantsConvertis);
         fluxSortie.close();
@@ -146,10 +146,10 @@ public class ControleurEtudiant implements HttpHandler {
         Set<Etudiant> listeFiltree = etudiantsParProg.getOrDefault(programme, new HashSet<>());
         byte[] etudiantsConvertis = objectMapper.writeValueAsBytes(listeFiltree);
 
-        echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
+        echange.getResponseHeaders().set("Content-Type", "application/json");
         echange.sendResponseHeaders(200, etudiantsConvertis.length);
 
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
         OutputStream fluxSortie = echange.getResponseBody();
         fluxSortie.write(etudiantsConvertis);
         fluxSortie.close();
@@ -166,6 +166,7 @@ public class ControleurEtudiant implements HttpHandler {
 
             String reponse = "Préférences " + preferences + " ajoutées avec succès à l'étudiant " + matricule + " !";
             byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
             echange.sendResponseHeaders(200, octetsReponse.length);
             OutputStream fluxSortie = echange.getResponseBody();
             fluxSortie.write(octetsReponse);
@@ -173,6 +174,7 @@ public class ControleurEtudiant implements HttpHandler {
         } else {
             String reponse = "Matricule étudiant manquant.";
             byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
             echange.sendResponseHeaders(400, octetsReponse.length);
             OutputStream fluxSortie = echange.getResponseBody();
             fluxSortie.write(octetsReponse);
@@ -199,6 +201,7 @@ public class ControleurEtudiant implements HttpHandler {
         } else {
             String reponse = "Identifiant étudiant manquant.";
             byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
             echange.sendResponseHeaders(400, octetsReponse.length);
             OutputStream fluxSortie = echange.getResponseBody();
             fluxSortie.write(octetsReponse);
