@@ -18,7 +18,7 @@ public class ControleurEtudiant implements HttpHandler {
     Map<String, Set<Etudiant>> etudiantsParProg = new HashMap<>();
 
     public ControleurEtudiant() {
-        Etudiant etudiantTest = new Etudiant("Yohann Ritter àéî()", "Techniques de l'Informatique", 111);
+        Etudiant etudiantTest = new Etudiant("Yohann Ritter àéî()", "Informatique", 111);
         Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
         etudiantTest.ajouterUnePreference(hackathonTest);
         etudiantTest.ajouterUnePreference(hackathonTest);
@@ -42,12 +42,15 @@ public class ControleurEtudiant implements HttpHandler {
                 break; // ⚠️ Ne pas oublier le break !
             case "GET":
                 String filtre = echange.getRequestURI().getQuery();
-                if (filtre != null && filtre.contains("idHackathon=")) {
-                    String param= filtre.split("idHackathon=")[1];
-                    int idHackathon = Integer.parseInt(param);
-                    rechercherParHackathons(echange, idHackathon);
-                } else {
+                if (filtre == null) {
                     afficherEtudiants(echange);
+                } else if (filtre.contains("idHackathon=")) {
+                    String param = filtre.split("idHackathon=")[1];
+                    int idHackathon = Integer.parseInt(param);
+                    rechercherParHackathon(echange, idHackathon);
+                } else if (filtre.contains("programme=")) {
+                    String programme = filtre.split("programme=")[1];
+                    rechercherParProgramme(echange, programme);
                 }
                 break;
             case "PATCH":
@@ -102,7 +105,20 @@ public class ControleurEtudiant implements HttpHandler {
         fluxSortie.close();
     }
 
-    private void rechercherParHackathons(HttpExchange echange, int idHackathon) throws IOException {
+    public void afficherEtudiants(HttpExchange echange) throws IOException {
+        System.out.println("Les etudiants vont être affichés");
+        byte[] etudiantsConvertis = objectMapper.writeValueAsBytes(listeTemporaire);
+
+        echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
+        echange.sendResponseHeaders(200, etudiantsConvertis.length);
+
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        OutputStream fluxSortie = echange.getResponseBody();
+        fluxSortie.write(etudiantsConvertis);
+        fluxSortie.close();
+    }
+
+    private void rechercherParHackathon(HttpExchange echange, int idHackathon) throws IOException {
         System.out.println("Recherche d'étudiants par id d'hackathon (" + idHackathon + ")");
 
         List<Etudiant> listeFiltree = new ArrayList<>();
@@ -124,9 +140,11 @@ public class ControleurEtudiant implements HttpHandler {
         fluxSortie.close();
     }
 
-    public void afficherEtudiants(HttpExchange echange) throws IOException {
-        System.out.println("Les etudiants vont être affichés");
-        byte[] etudiantsConvertis = objectMapper.writeValueAsBytes(listeTemporaire);
+    private void rechercherParProgramme(HttpExchange echange, String programme) throws IOException {
+        System.out.println("Recherche d'étudiants par programme (" + programme + ")");
+
+        Set<Etudiant> listeFiltree = etudiantsParProg.getOrDefault(programme, new HashSet<>());
+        byte[] etudiantsConvertis = objectMapper.writeValueAsBytes(listeFiltree);
 
         echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
         echange.sendResponseHeaders(200, etudiantsConvertis.length);

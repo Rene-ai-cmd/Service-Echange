@@ -9,7 +9,7 @@ Content-Type: application/json
 {
   "matricule": 12345,
   "nom": "Linus Torvalds àéî()",
-  "programme": "Techniques de l'Informatique"
+  "programme": "Informatique"
 }
 
 ### Suppression d'un étudiant
