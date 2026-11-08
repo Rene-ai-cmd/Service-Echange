@@ -8,25 +8,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ControleurHackathon implements HttpHandler {
 
     ObjectMapper objectMapper = new ObjectMapper();
-    List<Hackathon> listeTemporaire = new ArrayList<>();
+    HackathonDAO hackathonDAO = new HackathonDAO();
 
     @Override
     public void handle(HttpExchange echange) throws IOException {
-
         String typeRequete = echange.getRequestMethod();
-
         switch (typeRequete) {
             case "POST":
                 ajouterHackathon(echange);
                 break;
             case "GET":
-                listeHackathons(echange);
+                listerHackathons(echange);
+                //trouverHackathon(echange, id);
                 break;
             case "PUT":
                 modifierHackathon(echange);
@@ -37,7 +34,7 @@ public class ControleurHackathon implements HttpHandler {
             default:
                 String reponse = "Fonctionnalité non prise en charge.";
                 byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
-                echange.sendResponseHeaders(501, octetsReponse.length);
+                echange.sendResponseHeaders(405, octetsReponse.length);
                 OutputStream fluxSortie = echange.getResponseBody();
                 fluxSortie.write(octetsReponse);
                 fluxSortie.close();
@@ -45,21 +42,31 @@ public class ControleurHackathon implements HttpHandler {
         }
     }
 
-    public void listeHackathons(HttpExchange echange) throws IOException {
-        System.out.println("Mes hackathons vont être listés");
+    public void listerHackathons(HttpExchange echange) throws IOException {
+        System.out.println("Les hackathons vont être listés");
 
-//        Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
-        byte[] hackathonSerialise = objectMapper.writeValueAsBytes(listeTemporaire);
-
-        //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
-//        String reponse = "Liste des Hackathons !";
-//        byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+        byte[] hackathonsSerialise = objectMapper.writeValueAsBytes(hackathonDAO.trouverTous());
+
+        // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
+        echange.sendResponseHeaders(200, hackathonsSerialise.length);
+
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
+        OutputStream fluxSortie = echange.getResponseBody();
+        fluxSortie.write(hackathonsSerialise);
+        fluxSortie.close();
+    }
+
+    public void trouverHackathon(HttpExchange echange, int id) throws IOException {
+        System.out.println("On cherche le hackathon " + id);
+
+        // ÉTAPE 1 : préparer le texte de la réponse
+        byte[] hackathonSerialise = objectMapper.writeValueAsBytes(hackathonDAO.trouverParId(id));
 
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
         echange.sendResponseHeaders(200, hackathonSerialise.length);
 
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
         OutputStream fluxSortie = echange.getResponseBody();
         fluxSortie.write(hackathonSerialise);
         fluxSortie.close();
@@ -70,22 +77,20 @@ public class ControleurHackathon implements HttpHandler {
         InputStream fluxEntree = echange.getRequestBody();
 
         // 2. On lit TOUT le contenu du tuyau et on le transforme en texte
-        String corpsRecu = new String(
-                fluxEntree.readAllBytes(),
-                StandardCharsets.UTF_8
-        );
+        String corpsRecu = new String(fluxEntree.readAllBytes(), StandardCharsets.UTF_8);
 
         // 3. On ferme le tuyau (bonne pratique)
         fluxEntree.close();
 
         // 4. On affiche ce qu'on a reçu pour vérifier
         System.out.println("Données reçues du client : " + corpsRecu);
+        System.out.println("Le hackathon va être ajouté");
 
-        // 5. Je Déserialise
+        // 5. On déserialise l'objet reçu
         Hackathon hackathonRecu = objectMapper.readValue(corpsRecu, Hackathon.class);
-        listeTemporaire.add(hackathonRecu);
 
-        System.out.println("Mon hackathon va etre ajouté");
+        // 6. On ajoute le hackathon à la liste
+        hackathonDAO.sauvegarder(hackathonRecu);
 
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
@@ -95,7 +100,7 @@ public class ControleurHackathon implements HttpHandler {
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
         echange.sendResponseHeaders(200, octetsReponse.length);
 
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
         OutputStream fluxSortie = echange.getResponseBody();
         fluxSortie.write(octetsReponse);
         fluxSortie.close();
@@ -133,7 +138,7 @@ public class ControleurHackathon implements HttpHandler {
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
         echange.sendResponseHeaders(200, octetsReponse.length);
 
-        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis fermer
+        // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
         OutputStream fluxSortie = echange.getResponseBody();
         fluxSortie.write(octetsReponse);
         fluxSortie.close();
