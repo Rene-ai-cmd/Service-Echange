@@ -5,13 +5,14 @@ import java.util.List;
 
 public class Etudiant {
 
-    private int id;
+    private int id = 0;
     private String nom;
     private String programme;
     private Integer matricule;
     private List<Hackathon> preferencesHackathons;
 
     public Etudiant() {
+        // Constructeur par défaut requis par la librarie Jackson-databind
     }
 
     public Etudiant(String nom, String programme, int matricule) {
@@ -22,7 +23,7 @@ public class Etudiant {
     }
 
     public Etudiant(int id, String nom, String programme, int matricule) {
-        this(nom,  programme, matricule);
+        this(nom, programme, matricule);
         this.id = id;
     }
 
@@ -91,8 +92,9 @@ public class Etudiant {
     @Override
     public String toString() {
         return "On dit bonjour à : {" +
-                "\"nomEtudiant\": \"" + nom + "\"" +
+                "\"nom\": \"" + nom + "\"" +
                 ", \"programme\": \"" + programme + "\"" +
+                ", \"matricule\": \"" + matricule + "\"" +
                 ", \"preferences\": \"" + preferencesHackathons + "\"" +
                 "}";
     }

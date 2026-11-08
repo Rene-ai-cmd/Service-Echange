@@ -3,27 +3,25 @@ package cal.info;
 public class Hackathon {
 
     private int id;
-    private String nomHackathon;
-    private String dateHackathon;
-    private String lieuHackathon;
-    private String urlHackathon;
+    private String nom;
+    private String date;
+    private String lieu;
+    private String url;
 
     public Hackathon() {
+        // Constructeur par défaut requis par la librarie Jackson-databind
     }
 
-    public Hackathon(String nomHackathon, String dateHackathon, String lieuHackathon, String urlHackathon) {
-        this.nomHackathon = nomHackathon;
-        this.dateHackathon = dateHackathon;
-        this.lieuHackathon = lieuHackathon;
-        this.urlHackathon = urlHackathon;
-    }
-
-    public Hackathon(int id, String nomHackathon, String dateHackathon, String lieuHackathon, String urlHackathon) {
+    public Hackathon(int id, String nom, String date, String lieu, String url) {
         this.id = id;
-        this.nomHackathon = nomHackathon;
-        this.dateHackathon = dateHackathon;
-        this.lieuHackathon = lieuHackathon;
-        this.urlHackathon = urlHackathon;
+        this.nom = nom;
+        this.date = date;
+        this.lieu = lieu;
+        this.url = url;
+    }
+
+    public Hackathon(String nom, String date, String lieu, String url) {
+        this(0, nom, date, lieu, url);
     }
 
     public int getId() {
@@ -34,46 +32,46 @@ public class Hackathon {
         this.id = id;
     }
 
-    public String getNomHackathon() {
-        return nomHackathon;
+    public String getNom() {
+        return nom;
     }
 
-    public void setNomHackathon(String nomHackathon) {
-        this.nomHackathon = nomHackathon;
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
-    public String getDateHackathon() {
-        return dateHackathon;
+    public String getDate() {
+        return date;
     }
 
-    public void setDateHackathon(String dateHackathon) {
-        this.dateHackathon = dateHackathon;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public String getLieuHackathon() {
-        return lieuHackathon;
+    public String getLieu() {
+        return lieu;
     }
 
-    public void setLieuHackathon(String lieuHackathon) {
-        this.lieuHackathon = lieuHackathon;
+    public void setLieu(String lieu) {
+        this.lieu = lieu;
     }
 
-    public String getUrlHackathon() {
-        return urlHackathon;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUrlHackathon(String urlHackathon) {
-        this.urlHackathon = urlHackathon;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
     public String toString() {
         return "Woa le beau hackathon : {" +
                 "\"id\": \"" + id + "\"" +
-                "\"nomHackathon\": \"" + nomHackathon + "\"" +
-                ", \"dateHackathon\": \"" + dateHackathon + "\"" +
-                ", \"lieuHackathon\": \"" + lieuHackathon + "\"" +
-                ", \"urlHackathon\": \"" + urlHackathon + "\"" +
+                "\"nom\": \"" + nom + "\"" +
+                ", \"date\": \"" + date + "\"" +
+                ", \"lieu\": \"" + lieu + "\"" +
+                ", \"url\": \"" + url + "\"" +
                 '}';
     }
 }
