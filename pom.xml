@@ -30,5 +30,13 @@
             <version>3.2.2</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/com.h2database/h2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.5.252</version>
+            <!-- <scope>test</scope> -->
+        </dependency>
     </dependencies>
 </project>
