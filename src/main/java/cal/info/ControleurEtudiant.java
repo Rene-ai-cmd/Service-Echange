@@ -12,14 +12,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class ControleurEtudiant implements HttpHandler {
-
-    ObjectMapper objectMapper = new ObjectMapper();
-    List<Etudiant> listeTemporaire = new ArrayList<>();
-    Map<String, Set<Etudiant>> etudiantsParProg = new HashMap<>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final List<Etudiant> listeTemporaire = new ArrayList<>();
+    private final Map<String, Set<Etudiant>> etudiantsParProg = new HashMap<>();
 
     public ControleurEtudiant() {
-        Etudiant etudiantTest = new Etudiant("Yohann Ritter àéî()", "Informatique", 111);
-        Hackathon hackathonTest = new Hackathon("Hack Canada àéî()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
+        Etudiant etudiantTest = new Etudiant(1, "Yohann Ritter àéîøü", "Informatique", 111);
+        Hackathon hackathonTest = new Hackathon(1, "HackCanada()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
         etudiantTest.ajouterUnePreference(hackathonTest);
         etudiantTest.ajouterUnePreference(hackathonTest);
 
@@ -35,8 +34,8 @@ public class ControleurEtudiant implements HttpHandler {
 
     @Override
     public void handle(HttpExchange echange) throws IOException {
-        // On regarde le TYPE de requête pour savoir quoi faire
-        switch (echange.getRequestMethod()) {
+        String typeRequete = echange.getRequestMethod();
+        switch (typeRequete) { // On regarde le TYPE de requête pour savoir quoi faire
             case "POST":
                 ajouterEtudiant(echange);
                 break; // ⚠️ Ne pas oublier le break !
@@ -76,12 +75,12 @@ public class ControleurEtudiant implements HttpHandler {
 
         // 4. On affiche ce qu'on a reçu pour vérifier
         System.out.println("Données reçues du client : " + corpsRecu);
-        System.out.println("L'étudiant va être ajouté");
 
         // 5. Construisons notre objet
         Etudiant etudiantRecu = objectMapper.readValue(corpsRecu, Etudiant.class);
 
         // 6. Ajoutons l'étudiant à la liste
+        System.out.println("L'étudiant va être ajouté");
         listeTemporaire.add(etudiantRecu);
 
         // 7. Ajoutons aussi l'étudiant au tableau des programmes
@@ -172,7 +171,7 @@ public class ControleurEtudiant implements HttpHandler {
             fluxSortie.write(octetsReponse);
             fluxSortie.close();
         } else {
-            String reponse = "Matricule étudiant manquant.";
+            String reponse = "Matricule étudiant manquant!";
             byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
             echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
             echange.sendResponseHeaders(400, octetsReponse.length);
@@ -191,7 +190,7 @@ public class ControleurEtudiant implements HttpHandler {
 
             // Poutine
 
-            String reponse = "Étudiant supprimé avec succès !";
+            String reponse = "Étudiant supprimé avec succès.";
             byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
             echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
             echange.sendResponseHeaders(200, octetsReponse.length);
@@ -199,7 +198,7 @@ public class ControleurEtudiant implements HttpHandler {
             fluxSortie.write(octetsReponse);
             fluxSortie.close();
         } else {
-            String reponse = "Identifiant étudiant manquant.";
+            String reponse = "Identifiant étudiant manquant!";
             byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
             echange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
             echange.sendResponseHeaders(400, octetsReponse.length);
