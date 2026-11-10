@@ -6,7 +6,14 @@ public class HackathonDAO extends DaoEnMemoire<Hackathon, Integer> {
 
     @Override
     protected Integer extraireId(Hackathon entite) {
-        return entite.getId();
+        return entite.getId() > 0 ? entite.getId() : null;
+    }
+
+    @Override
+    protected Integer assignerId(Hackathon entite) {
+        int lastId = stockage.isEmpty() ? 0 : stockage.lastKey();
+        entite.setId(++lastId);
+        return lastId;
     }
 
     public List<Hackathon> trouverParNom(String nom) {

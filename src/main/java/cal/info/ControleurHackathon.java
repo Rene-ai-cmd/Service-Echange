@@ -66,8 +66,9 @@ public class ControleurHackathon implements HttpHandler {
         // ÉTAPE 1 : préparer le texte de la réponse
         byte[] hackathonSerialise = objectMapper.writeValueAsBytes(hackathonDAO.trouverParId(id));
 
-        // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
-        echange.sendResponseHeaders(200, hackathonSerialise.length);
+        // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK ou 404 = Introuvable, + la longueur du corps)
+        int codeHTTP = hackathonDAO.existe(id) ? 200 : 404; // Au cas où que le hackathon demandé soit introuvable
+        echange.sendResponseHeaders(codeHTTP, hackathonSerialise.length);
 
         // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
         OutputStream fluxSortie = echange.getResponseBody();
@@ -133,7 +134,7 @@ public class ControleurHackathon implements HttpHandler {
         if (hackathonRecu.getId() == 0)
             hackathonRecu.setId(id);
         else if (hackathonRecu.getId() != id)
-            hackathonDAO.supprimer(id);
+            hackathonDAO.supprimer(id); // Si on veut modifier l'id de l'objet, il faut le supprimer avant de l'ajouter
         hackathonRecu = hackathonDAO.sauvegarder(hackathonRecu);
 
         //REPONSE

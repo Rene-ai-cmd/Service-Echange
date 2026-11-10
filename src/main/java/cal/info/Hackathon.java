@@ -2,7 +2,7 @@ package cal.info;
 
 public class Hackathon {
 
-    private int id;
+    private int id = 0; // L'id par défaut (temporaire) est explicitement `0`
     private String nom;
     private String date;
     private String lieu;
@@ -12,16 +12,16 @@ public class Hackathon {
         // Constructeur par défaut requis par la librairie Jackson-databind
     }
 
-    public Hackathon(int id, String nom, String date, String lieu, String url) {
-        this.id = id;
+    public Hackathon(String nom, String date, String lieu, String url) {
         this.nom = nom;
         this.date = date;
         this.lieu = lieu;
         this.url = url;
     }
 
-    public Hackathon(String nom, String date, String lieu, String url) {
-        this(0, nom, date, lieu, url);
+    public Hackathon(int id, String nom, String date, String lieu, String url) {
+        this(nom, date, lieu, url);
+        this.id = id;
     }
 
     public int getId() {
