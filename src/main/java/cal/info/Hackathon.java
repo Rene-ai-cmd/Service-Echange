@@ -9,7 +9,7 @@ public class Hackathon {
     private String url;
 
     public Hackathon() {
-        // Constructeur par défaut requis par la librarie Jackson-databind
+        // Constructeur par défaut requis par la librairie Jackson-databind
     }
 
     public Hackathon(int id, String nom, String date, String lieu, String url) {
@@ -66,9 +66,9 @@ public class Hackathon {
 
     @Override
     public String toString() {
-        return "Woa le beau hackathon : {" +
-                "\"id\": \"" + id + "\"" +
-                "\"nom\": \"" + nom + "\"" +
+        return '{' +
+                "\"id\": " + id +
+                ", \"nom\": \"" + nom + "\"" +
                 ", \"date\": \"" + date + "\"" +
                 ", \"lieu\": \"" + lieu + "\"" +
                 ", \"url\": \"" + url + "\"" +
