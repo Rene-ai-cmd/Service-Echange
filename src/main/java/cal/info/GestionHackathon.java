@@ -48,19 +48,20 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
 
     @Override
     public Hackathon sauvegarder(Hackathon hackathon) throws SQLException {
+        //FIXME `sauvegarder` pourrait aussi être utilisée pour modifier un hackathon existant
         String insertSQL = "INSERT INTO Hackathon (nom, date, lieu, url) VALUES (?, ?, ?, ?)";
         try (Connection conn = BaseDeDonnees.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(insertSQL)) {
+             PreparedStatement stmt = conn.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, hackathon.getNom());
             stmt.setString(2, hackathon.getDate());
             stmt.setString(3, hackathon.getLieu());
             stmt.setString(4, hackathon.getUrl());
             stmt.executeUpdate();
 
-            /*ResultSet rs = stmt.getGeneratedKeys();
+            // On va ajouter l'id généré par la DB dans l'objet hackathon avant de le retourner
+            ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next())
-                hackathon.setId(rs.getInt("id"));
-            */
+                hackathon.setId(rs.getInt(1)); // ou alors `hackathon = trouverParId(rs.getInt(1));`
         }
         return hackathon;
     }
@@ -77,14 +78,11 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
 
     @Override
     public boolean existe(Integer id) throws SQLException {
-        String selectSQL = "SELECT id FROM Hackathon WHERE id=" + id;
+        String selectSQL = "SELECT 1 FROM Hackathon WHERE id=" + id;
         try (Connection conn = BaseDeDonnees.getConnection();
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(selectSQL);
-            if (rs.next()) {
-                return true;
-            }
+            return rs.next();
         }
-        return false;
     }
 }
