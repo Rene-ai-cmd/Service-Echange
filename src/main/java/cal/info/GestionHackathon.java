@@ -31,7 +31,7 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
         /* Fonctionnel, mais inefficace (pourquoi?) :
         return trouverTous().stream()
                 .filter(hackathon -> hackathon.getId() == id)
-                .findFirst().get();
+                .findFirst().orElse(null);
         */
 
         String selectSQL = "SELECT * FROM Hackathon WHERE id=?";
@@ -54,10 +54,12 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
 
     @Override
     public Hackathon sauvegarder(Hackathon hackathon) throws SQLException {
-        //FIXME `sauvegarder` pourrait aussi être utilisée pour modifier un hackathon existant
-        String insertSQL = "INSERT INTO Hackathon (nom, date, lieu, url) VALUES (?, ?, ?, ?)";
+        String upsertSQL = (hackathon.getId() == 0)
+             ? "INSERT INTO Hackathon (nom, date, lieu, url) VALUES (?, ?, ?, ?)"
+             : "UPDATE Hackathon SET nom=?, date=?, lieu=?, url=? WHERE id=" + hackathon.getId();
+
         try (Connection conn = BaseDeDonnees.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(upsertSQL, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, hackathon.getNom());
             stmt.setString(2, hackathon.getDate());
             stmt.setString(3, hackathon.getLieu());
