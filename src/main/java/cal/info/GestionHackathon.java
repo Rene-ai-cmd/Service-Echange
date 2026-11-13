@@ -28,6 +28,12 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
 
     @Override
     public Hackathon trouverParId(Integer id) throws SQLException  {
+        /* Fonctionnel, mais inefficace (pourquoi?) :
+        return trouverTous().stream()
+                .filter(hackathon -> hackathon.getId() == id)
+                .findFirst().get();
+        */
+
         String selectSQL = "SELECT * FROM Hackathon WHERE id=?";
         try (Connection conn = BaseDeDonnees.getConnection();
              PreparedStatement stmt = conn.prepareStatement(selectSQL)) {
@@ -61,7 +67,7 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
             // On va ajouter l'id généré par la DB dans l'objet hackathon avant de le retourner
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next())
-                hackathon.setId(rs.getInt(1)); // ou alors `hackathon = trouverParId(rs.getInt(1));`
+                hackathon.setId(rs.getInt("id")); // ou alors `hackathon = trouverParId(rs.getInt(1));`
         }
         return hackathon;
     }

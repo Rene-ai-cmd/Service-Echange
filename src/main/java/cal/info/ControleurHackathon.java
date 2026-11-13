@@ -8,48 +8,62 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 
 public class ControleurHackathon implements HttpHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final HackathonDAO hackathonDAO = new HackathonDAO();
+    //private final HackathonDAO hackathonDAO = new HackathonDAO();
+    private final GestionHackathon gestionHackathon = new GestionHackathon();
 
     @Override
     public void handle(HttpExchange echange) throws IOException {
         String[] path = echange.getRequestURI().getPath().split("/");
         Integer idHackathon = path.length > 2 ? Integer.parseInt(path[2]) : null;
 
-        switch (echange.getRequestMethod()) {
-            case "POST":
-                ajouterHackathon(echange);
-                break;
-            case "GET":
-                if (path.length <= 2)
-                    listerHackathons(echange);
-                else
-                    trouverHackathon(echange, idHackathon);
-                break;
-            case "PUT":
-                modifierHackathon(echange, idHackathon);
-                break;
-            case "DELETE":
-                supprimerHackathon(echange, idHackathon);
-                break;
-            default:
-                String reponse = "Fonctionnalité non prise en charge.";
-                byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
-                echange.sendResponseHeaders(405, octetsReponse.length);
-                OutputStream fluxSortie = echange.getResponseBody();
-                fluxSortie.write(octetsReponse);
-                fluxSortie.close();
-                break;
+        try {
+            switch (echange.getRequestMethod()) {
+                case "POST":
+                    ajouterHackathon(echange);
+                    break;
+                case "GET":
+                    if (path.length <= 2)
+                        listerHackathons(echange);
+                    else
+                        trouverHackathon(echange, idHackathon);
+                    break;
+                case "PUT":
+                    modifierHackathon(echange, idHackathon);
+                    break;
+                case "DELETE":
+                    supprimerHackathon(echange, idHackathon);
+                    break;
+                default:
+                    String reponse = "Fonctionnalité non prise en charge.";
+                    byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+                    echange.sendResponseHeaders(405, octetsReponse.length);
+                    OutputStream fluxSortie = echange.getResponseBody();
+                    fluxSortie.write(octetsReponse);
+                    fluxSortie.close();
+                    break;
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur JDBC: " + e.getMessage());
+            e.printStackTrace();
+
+            String reponse = "Erreur de communication avec la base de données.";
+            byte[] octetsReponse = reponse.getBytes(StandardCharsets.UTF_8);
+            echange.sendResponseHeaders(500, octetsReponse.length);
+            OutputStream fluxSortie = echange.getResponseBody();
+            fluxSortie.write(octetsReponse);
+            fluxSortie.close();
         }
     }
 
-    public void listerHackathons(HttpExchange echange) throws IOException {
+    public void listerHackathons(HttpExchange echange) throws IOException, SQLException {
         System.out.println("Les hackathons vont être listés");
 
         // ÉTAPE 1 : préparer le texte de la réponse
-        byte[] hackathonsSerialise = objectMapper.writeValueAsBytes(hackathonDAO.trouverTous());
+        byte[] hackathonsSerialise = objectMapper.writeValueAsBytes(gestionHackathon.trouverTous());
 
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK, + la longueur du corps)
         echange.sendResponseHeaders(200, hackathonsSerialise.length);
@@ -60,14 +74,14 @@ public class ControleurHackathon implements HttpHandler {
         fluxSortie.close();
     }
 
-    public void trouverHackathon(HttpExchange echange, Integer id) throws IOException {
+    public void trouverHackathon(HttpExchange echange, Integer id) throws IOException, SQLException {
         System.out.println("On cherche le hackathon " + id);
 
         // ÉTAPE 1 : préparer le texte de la réponse
-        byte[] hackathonSerialise = objectMapper.writeValueAsBytes(hackathonDAO.trouverParId(id));
+        byte[] hackathonSerialise = objectMapper.writeValueAsBytes(gestionHackathon.trouverParId(id));
 
         // ÉTAPE 2 : envoyer les en-têtes (code 200 = OK ou 404 = Introuvable, + la longueur du corps)
-        int codeHTTP = hackathonDAO.existe(id) ? 200 : 404; // Au cas où que le hackathon demandé soit introuvable
+        int codeHTTP = gestionHackathon.existe(id) ? 200 : 404; // Au cas où que le hackathon demandé soit introuvable
         echange.sendResponseHeaders(codeHTTP, hackathonSerialise.length);
 
         // ÉTAPE 3 : écrire le corps dans le tuyau de sortie, puis le fermer
@@ -76,7 +90,7 @@ public class ControleurHackathon implements HttpHandler {
         fluxSortie.close();
     }
 
-    public void ajouterHackathon(HttpExchange echange) throws IOException {
+    public void ajouterHackathon(HttpExchange echange) throws IOException, SQLException {
         // 1. On récupère le tuyau d'entrée (les données du client)
         InputStream fluxEntree = echange.getRequestBody();
 
@@ -93,11 +107,11 @@ public class ControleurHackathon implements HttpHandler {
         Hackathon hackathonRecu = objectMapper.readValue(corpsRecu, Hackathon.class);
 
         // 6. On ajoute le hackathon à la liste (s'il n'existe pas déjà)
-        if (hackathonDAO.existe(hackathonRecu.getId()))
+        if (gestionHackathon.existe(hackathonRecu.getId()))
             throw new IllegalArgumentException("Le id " + hackathonRecu.getId() + " est déjà pris!");
 
         System.out.println("Le hackathon va être ajouté");
-        hackathonRecu = hackathonDAO.sauvegarder(hackathonRecu);
+        hackathonRecu = gestionHackathon.sauvegarder(hackathonRecu);
 
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
@@ -113,7 +127,7 @@ public class ControleurHackathon implements HttpHandler {
         fluxSortie.close();
     }
 
-    public void modifierHackathon(HttpExchange echange, Integer id) throws IOException {
+    public void modifierHackathon(HttpExchange echange, Integer id) throws IOException, SQLException {
         // 1. On récupère le tuyau d'entrée (les données du client)
         InputStream fluxEntree = echange.getRequestBody();
 
@@ -134,8 +148,8 @@ public class ControleurHackathon implements HttpHandler {
         if (hackathonRecu.getId() == 0)
             hackathonRecu.setId(id);
         else if (hackathonRecu.getId() != id)
-            hackathonDAO.supprimer(id); // Si on veut modifier l'id de l'objet, il faut le supprimer avant de l'ajouter
-        hackathonRecu = hackathonDAO.sauvegarder(hackathonRecu);
+            gestionHackathon.supprimer(id); // Si on veut modifier l'id de l'objet, il faut le supprimer avant de l'ajouter
+        hackathonRecu = gestionHackathon.sauvegarder(hackathonRecu);
 
         //REPONSE
         // ÉTAPE 1 : préparer le texte de la réponse
@@ -151,13 +165,13 @@ public class ControleurHackathon implements HttpHandler {
         fluxSortie.close();
     }
 
-    public void supprimerHackathon(HttpExchange echange, Integer id) throws IOException {
+    public void supprimerHackathon(HttpExchange echange, Integer id) throws IOException, SQLException {
         String reponse;
         int codeHTTP;
 
         if (id != null) {
             System.out.println("Le hackathon " + id + " va être supprimé");
-            if (hackathonDAO.supprimer(id)) {
+            if (gestionHackathon.supprimer(id)) {
                 reponse = "Hackathon supprimé avec succès.";
                 codeHTTP = 200;
             }  else {
