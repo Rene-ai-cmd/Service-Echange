@@ -6,11 +6,22 @@ import java.util.List;
 
 public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
 
+    public static void initialiserTable(Statement stmt) throws SQLException {
+        stmt.execute("""
+                CREATE TABLE IF NOT EXISTS Hackathon (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                nom VARCHAR(255) NOT NULL,
+                date VARCHAR(50) NOT NULL,
+                lieu VARCHAR(255) NOT NULL,
+                url VARCHAR(255) NOT NULL);"""
+        );
+    }
+
     @Override
     public List<Hackathon> trouverTous() throws SQLException {
         List<Hackathon> hackathons = new ArrayList<>();
         String selectSQL = "SELECT * FROM Hackathon";
-        try (Connection conn = BaseDeDonnees.getConnection();
+        try (Connection conn = ConnectionPool.getConnection();
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(selectSQL);
             while (rs.next()) {
@@ -31,11 +42,9 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
         /* Fonctionnel, mais inefficace (pourquoi?) :
         return trouverTous().stream()
                 .filter(hackathon -> hackathon.getId() == id)
-                .findFirst().orElse(null);
-        */
-
+                .findFirst().orElse(null); */
         String selectSQL = "SELECT * FROM Hackathon WHERE id=?";
-        try (Connection conn = BaseDeDonnees.getConnection();
+        try (Connection conn = ConnectionPool.getConnection();
              PreparedStatement stmt = conn.prepareStatement(selectSQL)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -58,7 +67,7 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
              ? "INSERT INTO Hackathon (nom, date, lieu, url) VALUES (?, ?, ?, ?)"
              : "UPDATE Hackathon SET nom=?, date=?, lieu=?, url=? WHERE id=" + hackathon.getId();
 
-        try (Connection conn = BaseDeDonnees.getConnection();
+        try (Connection conn = ConnectionPool.getConnection();
              PreparedStatement stmt = conn.prepareStatement(upsertSQL, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, hackathon.getNom());
             stmt.setString(2, hackathon.getDate());
@@ -69,7 +78,7 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
             // On va ajouter l'id généré par la DB dans l'objet hackathon avant de le retourner
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next())
-                hackathon.setId(rs.getInt("id")); // ou alors `hackathon = trouverParId(rs.getInt(1));`
+                hackathon.setId(rs.getInt("id")); // ou encore `hackathon = trouverParId(rs.getInt("id"));`
         }
         return hackathon;
     }
@@ -77,17 +86,17 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
     @Override
     public boolean supprimer(Integer id) throws SQLException {
         String deleteSQL = "DELETE FROM Hackathon WHERE id=" + id;
-        try (Connection conn = BaseDeDonnees.getConnection();
+        try (Connection conn = ConnectionPool.getConnection();
              Statement stmt = conn.createStatement()) {
-            int nbSupressions = stmt.executeUpdate(deleteSQL);
-            return nbSupressions > 0;
+            int nbSuppressions = stmt.executeUpdate(deleteSQL);
+            return nbSuppressions > 0;
         }
     }
 
     @Override
     public boolean existe(Integer id) throws SQLException {
         String selectSQL = "SELECT 1 FROM Hackathon WHERE id=" + id;
-        try (Connection conn = BaseDeDonnees.getConnection();
+        try (Connection conn = ConnectionPool.getConnection();
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(selectSQL);
             return rs.next();

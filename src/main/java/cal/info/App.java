@@ -7,10 +7,24 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.sql.SQLException;
 
-public class App 
-{
-    public static void main( String[] args ) throws IOException {
+public class App  {
+    public static void main(String[] args) throws IOException, SQLException {
+        // Initialisation du pool de connexions à la DB
+        ConnectionPool.initialiserPool();
+
+        // Initialiser la base de données en créant les tables si elles n'existent pas
+        ConnectionPool.initialiserBase();
+
+        // Exemples pour tester les requêtes à la DB
+        GestionHackathon ga = new GestionHackathon();
+        ga.sauvegarder(new Hackathon("HackCanada()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org"));
+        System.out.println(ga.trouverTous());
+        System.out.println(ga.trouverParId(1));
+        System.out.println(ga.supprimer(2));
+        System.out.println(ga.existe(3));
+
         System.out.println( "Hello la belle gang que vous etes." );
 
         // Création du serveur HTTP qui écoutera sur le port 8000
