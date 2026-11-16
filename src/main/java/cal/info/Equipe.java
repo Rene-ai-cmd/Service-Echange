@@ -1,12 +1,12 @@
 package cal.info;
 
-import java.util.List;
+import java.util.Set;
 
 public class Equipe {
-
-    private List<Etudiant> etudiants;
-
-    private String nomEquipe;
+    private int id;
+    private String nom;
+    private Set<Etudiant> etudiants;
+    private Hackathon hackathon;
 
     public void ajouterMembre(Etudiant etudiant) {
 

@@ -4,35 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Etudiant {
-
-    private int id = 0;
+    private Integer matricule;
     private String nom;
     private String programme;
-    private Integer matricule;
     private List<Hackathon> preferencesHackathons;
 
     public Etudiant() {
         // Constructeur par défaut requis par la librarie Jackson-databind
     }
 
-    public Etudiant(String nom, String programme, int matricule) {
+    public Etudiant(Integer matricule, String nom, String programme) {
+        this.matricule = matricule;
         this.nom = nom;
         this.programme = programme;
-        this.matricule = matricule;
         this.preferencesHackathons = new ArrayList<>();
     }
 
-    public Etudiant(int id, String nom, String programme, int matricule) {
-        this(nom, programme, matricule);
-        this.id = id;
+    public Integer getMatricule() {
+        return matricule;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public void setMatricule(Integer matricule) {
+        this.matricule = matricule;
     }
 
     public String getNom() {
@@ -49,14 +42,6 @@ public class Etudiant {
 
     public void setProgramme(String programme) {
         this.programme = programme;
-    }
-
-    public Integer getMatricule() {
-        return matricule;
-    }
-
-    public void setMatricule(Integer matricule) {
-        this.matricule = matricule;
     }
 
     public void ajouterUnePreference(Hackathon hackathon){

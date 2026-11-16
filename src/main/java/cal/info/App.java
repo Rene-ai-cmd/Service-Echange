@@ -15,7 +15,7 @@ public class App  {
         ConnectionPool.initialiserPool();
 
         // Initialiser la base de données en créant les tables si elles n'existent pas
-        ConnectionPool.initialiserBase();
+        ConnectionPool.initialiserTables();
 
         // Exemples pour tester les requêtes à la DB
         GestionHackathon ga = new GestionHackathon();

@@ -42,7 +42,7 @@ public class ConnectionPool {
     /**
      * Initialiser la base de données en créant les tables si elles n'existent pas
      */
-    public static void initialiserBase() throws SQLException {
+    public static void initialiserTables() throws SQLException {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
             GestionHackathon.initialiserTable(stmt);

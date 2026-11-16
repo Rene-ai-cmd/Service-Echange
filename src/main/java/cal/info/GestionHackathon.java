@@ -77,7 +77,7 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
 
             // On va ajouter l'id généré par la DB dans l'objet hackathon avant de le retourner
             ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next())
+            if (rs.next()) // On vérifie si le hackathon a bien été ajouté (s'il respecte les contraintes de la table)
                 hackathon.setId(rs.getInt("id")); // ou encore `hackathon = trouverParId(rs.getInt("id"));`
         }
         return hackathon;

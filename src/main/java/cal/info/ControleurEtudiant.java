@@ -17,7 +17,7 @@ public class ControleurEtudiant implements HttpHandler {
     private final Map<String, Set<Etudiant>> etudiantsParProg = new HashMap<>();
 
     public ControleurEtudiant() {
-        Etudiant etudiantTest = new Etudiant(1, "Yohann Ritter àéîøü", "Informatique", 111);
+        Etudiant etudiantTest = new Etudiant(123, "Yohann Ritter àéîøü", "Informatique");
         Hackathon hackathonTest = new Hackathon(1, "HackCanada()", "2027-01-08", "Guelph, Ontario", "https://hackcanada.org");
         etudiantTest.ajouterUnePreference(hackathonTest);
         etudiantTest.ajouterUnePreference(hackathonTest);

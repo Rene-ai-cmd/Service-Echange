@@ -17,7 +17,7 @@ public class BaseDeDonnees {
             Class.forName("org.h2.Driver");
 
             // Initialiser la base de données en créant les tables si elles n'existent pas
-            initialiserBase();
+            initialiserTables();
         }
         catch (ClassNotFoundException | SQLException e) {
             // Afficher l'erreur complète en cas d'exception
@@ -25,7 +25,7 @@ public class BaseDeDonnees {
         }
     }
 
-    private static void initialiserBase() throws SQLException {
+    private static void initialiserTables() throws SQLException {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
             GestionHackathon.initialiserTable(stmt);
