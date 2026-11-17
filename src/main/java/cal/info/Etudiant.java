@@ -10,7 +10,7 @@ public class Etudiant {
     private List<Hackathon> preferencesHackathons;
 
     public Etudiant() {
-        // Constructeur par défaut requis par la librarie Jackson-databind
+        // Constructeur par défaut requis par la librairie Jackson-databind
     }
 
     public Etudiant(Integer matricule, String nom, String programme) {
@@ -76,11 +76,11 @@ public class Etudiant {
 
     @Override
     public String toString() {
-        return "On dit bonjour à : {" +
-                "\"nom\": \"" + nom + "\"" +
+        return '{' +
+                "\"matricule\": \"" + matricule + "\"" +
+                ", \"nom\": \"" + nom + "\"" +
                 ", \"programme\": \"" + programme + "\"" +
-                ", \"matricule\": \"" + matricule + "\"" +
                 ", \"preferences\": \"" + preferencesHackathons + "\"" +
-                "}";
+                '}';
     }
 }

@@ -53,7 +53,7 @@ public class ControleurEtudiant implements HttpHandler {
                 }
                 break;
             case "PATCH":
-                ajouterPreferences(echange);
+                modifierPreferences(echange);
                 break;
             case "DELETE":
                 supprimerEtudiant(echange);
@@ -154,13 +154,14 @@ public class ControleurEtudiant implements HttpHandler {
         fluxSortie.close();
     }
 
-    public void ajouterPreferences(HttpExchange echange) throws IOException {
+    public void modifierPreferences(HttpExchange echange) throws IOException {
         String filtre = echange.getRequestURI().getQuery();
         if (filtre != null && filtre.contains("matricule=")) {
             String matricule= filtre.split("matricule=")[1];
             System.out.println("L'étudiant " + matricule + " va être modifié");
 
-            List<Integer> preferences = objectMapper.readValue(echange.getRequestBody().readAllBytes(), new TypeReference<>() {});
+            List<Integer> preferences = objectMapper.readValue(echange.getRequestBody().readAllBytes(),
+                    new TypeReference<>() {});
             // Poutine
 
             String reponse = "Préférences " + preferences + " ajoutées avec succès à l'étudiant " + matricule + " !";

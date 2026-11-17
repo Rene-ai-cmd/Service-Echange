@@ -85,7 +85,7 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
 
     @Override
     public boolean supprimer(Integer id) throws SQLException {
-        String deleteSQL = "DELETE FROM Hackathon WHERE id=" + id;
+        String deleteSQL = "DELETE FROM Hackathon WHERE id=" + id; // Mauvaise pratique, on devrait utiliser un PreparedStatement
         try (Connection conn = ConnectionPool.getConnection();
              Statement stmt = conn.createStatement()) {
             int nbSuppressions = stmt.executeUpdate(deleteSQL);
@@ -95,7 +95,7 @@ public class GestionHackathon implements DaoGenerique<Hackathon, Integer> {
 
     @Override
     public boolean existe(Integer id) throws SQLException {
-        String selectSQL = "SELECT 1 FROM Hackathon WHERE id=" + id;
+        String selectSQL = "SELECT 1 FROM Hackathon WHERE id=" + id; // idem (même chose que le commentaire précédent)
         try (Connection conn = ConnectionPool.getConnection();
              Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(selectSQL);

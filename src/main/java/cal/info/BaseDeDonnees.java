@@ -17,7 +17,7 @@ public class BaseDeDonnees {
             Class.forName("org.h2.Driver");
 
             // Initialiser la base de données en créant les tables si elles n'existent pas
-            initialiserTables();
+            initialiserBase();
         }
         catch (ClassNotFoundException | SQLException e) {
             // Afficher l'erreur complète en cas d'exception
@@ -25,10 +25,17 @@ public class BaseDeDonnees {
         }
     }
 
-    private static void initialiserTables() throws SQLException {
+    private static void initialiserBase() throws SQLException {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
-            GestionHackathon.initialiserTable(stmt);
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS Hackathon (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                nom VARCHAR(255) NOT NULL,
+                date VARCHAR(50) NOT NULL,
+                lieu VARCHAR(255) NOT NULL,
+                url VARCHAR(255) NOT NULL);"""
+            );
         } // finally { stmt.close(); conn.close(); }
     }
 

@@ -6,7 +6,7 @@ public class Equipe {
     private int id;
     private String nom;
     private Set<Etudiant> etudiants;
-    private Hackathon hackathon;
+    private Hackathon participeHackathon;
 
     public void ajouterMembre(Etudiant etudiant) {
 

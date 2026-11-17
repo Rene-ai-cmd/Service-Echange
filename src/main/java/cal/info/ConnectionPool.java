@@ -46,6 +46,7 @@ public class ConnectionPool {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
             GestionHackathon.initialiserTable(stmt);
+            GestionEtudiant.initialiserTable(stmt);
         } // finally { stmt.close(); conn.close(); }
     }
 
